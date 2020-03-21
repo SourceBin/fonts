@@ -1,43 +1,26 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const { join } = require('path');
 
+const { getFontFace } = require('./css.js');
+const { transformFonts } = require('./transform.js');
+
 const DIST_DIR = join(__dirname, '..', 'dist');
-const FONTS_DIR = join(__dirname, '..', 'fonts');
-const EXTENSION_REGEX = /\.woff2?$/;
+const FONTS_DIR = join(DIST_DIR, 'fonts');
 
-const fontWeights = {
-  regular: 400,
-};
-
-function getCSS(font, dir) {
-  return [
-    ...new Set(
-      fs
-        .readdirSync(dir)
-        .filter(file => file.match(EXTENSION_REGEX))
-        .map(file => file.replace(EXTENSION_REGEX, '')),
-    ),
-  ].map(weight => `
-    @font-face {
-      font-family: '${font}';
-      font-weight: ${fontWeights[weight]};
-      font-display: swap;
-      src:
-        local('${font}'),
-        url('../fonts/${font}/${weight}.woff2') format('woff2'),
-        url('../fonts/${font}/${weight}.woff') format('woff');
-    }
-  `);
-}
-
-if (!fs.existsSync(DIST_DIR)) {
+if (fs.existsSync(DIST_DIR)) {
+  fs.emptyDirSync(DIST_DIR);
+} else {
   fs.mkdirSync(DIST_DIR);
 }
 
+fs.copySync(join(__dirname, '..', 'fonts'), FONTS_DIR);
+
 const fonts = fs.readdirSync(FONTS_DIR);
 
+fonts.forEach(font => transformFonts(join(FONTS_DIR, font)));
+
 const css = fonts
-  .map(font => getCSS(font, join(FONTS_DIR, font)))
+  .map(font => getFontFace(font, join(FONTS_DIR, font)))
   .reduce((a, b) => a + b);
 
 fs.writeFileSync(join(DIST_DIR, 'index.json'), JSON.stringify(fonts, null, 2));

@@ -14,10 +14,12 @@
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-eslint-comments": "^3.1.2",
     "eslint-plugin-import": "^2.19.1",
-    "eslint-plugin-jsdoc": "^15.8.0"
+    "eslint-plugin-jsdoc": "^15.8.0",
+    "fs-extra": "^9.0.0",
+    "ttf2woff": "^2.0.1",
+    "ttf2woff2": "^3.0.0"
   },
   "files": [
-    "fonts",
     "dist"
   ]
 }
