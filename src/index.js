@@ -30,13 +30,15 @@ function getCSS(font, dir) {
   `);
 }
 
-const css = fs
-  .readdirSync(FONTS_DIR)
-  .map(font => getCSS(font, join(FONTS_DIR, font)))
-  .reduce((a, b) => a + b);
-
 if (!fs.existsSync(DIST_DIR)) {
   fs.mkdirSync(DIST_DIR);
 }
 
+const fonts = fs.readdirSync(FONTS_DIR);
+
+const css = fonts
+  .map(font => getCSS(font, join(FONTS_DIR, font)))
+  .reduce((a, b) => a + b);
+
+fs.writeFileSync(join(DIST_DIR, 'index.json'), JSON.stringify(fonts, null, 2));
 fs.writeFileSync(join(DIST_DIR, 'index.css'), css);
