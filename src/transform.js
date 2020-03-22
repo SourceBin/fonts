@@ -24,7 +24,7 @@ function transformTTF(dir, file) {
   }
 }
 
-module.exports.transformFonts = (dir) => {
+module.exports.transformFontFiles = (dir) => {
   fs.readdirSync(dir).forEach((file) => {
     if (file.endsWith('.ttf')) {
       transformTTF(dir, file);

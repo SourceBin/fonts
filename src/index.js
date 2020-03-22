@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const { join } = require('path');
 
 const { getFontFace } = require('./css.js');
-const { transformFonts } = require('./transform.js');
+const { transformFontFiles } = require('./transform.js');
 
 const DIST_DIR = join(__dirname, '..', 'dist');
 const FONTS_DIR = join(DIST_DIR, 'fonts');
@@ -17,10 +17,15 @@ fs.copySync(join(__dirname, '..', 'fonts'), FONTS_DIR);
 
 const fonts = fs.readdirSync(FONTS_DIR);
 
-fonts.forEach(font => transformFonts(join(FONTS_DIR, font)));
-
 const css = fonts
-  .map(font => getFontFace(font, join(FONTS_DIR, font)))
+  .map((font, i, array) => {
+    console.log(`${i + 1}/${array.length} - ${font}`);
+
+    const dir = join(FONTS_DIR, font);
+
+    transformFontFiles(dir);
+    return getFontFace(font, dir);
+  })
   .reduce((a, b) => a + b);
 
 fs.writeFileSync(join(DIST_DIR, 'index.json'), JSON.stringify(fonts, null, 2));
